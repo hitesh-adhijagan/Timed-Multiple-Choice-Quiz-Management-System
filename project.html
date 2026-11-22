@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Timed Multiple-Choice Quiz Management System">
+  <meta name="keywords" content="HTML5, CSS3, JavaScript, Timed Quiz, MCQ, CSE326">
+  <title>Timed Multiple-Choice Quiz Management System</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand">
+      <svg width="26" height="26" viewBox="0 0 28 28">
+        <circle cx="14" cy="14" r="12" fill="none" stroke="currentColor" stroke-width="2"></circle>
+        <line x1="14" y1="14" x2="14" y2="7" stroke="currentColor" stroke-width="2"></line>
+        <line x1="14" y1="14" x2="19" y2="17" stroke="currentColor" stroke-width="2"></line>
+      </svg>
+      <h1>Timed MCQ Quiz System</h1>
+    </div>
+    <nav class="nav-links">
+      <a href="#setup-section" id="nav-setup" class="nav-link active-nav">Topic Setup</a>
+      <a href="#quiz-section" id="nav-quiz" class="nav-link">Quiz Arena</a>
+      <a href="#results-section" id="nav-results" class="nav-link">Evaluation</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section id="setup-section" class="card">
+      <h2>Quiz Topic and Session Setup</h2>
+      <p class="progress-label">Enter your name and choose a quiz topic and duration to start the timed assessment.</p>
+
+      <form id="setup-form" novalidate>
+        <fieldset class="form-group">
+          <div class="field">
+            <label for="candidate-name">Student Name:</label>
+            <input type="text" id="candidate-name" name="candidateName" placeholder="Enter your name" maxlength="40" required>
+          </div>
+
+          <div class="field">
+            <label for="topic-select">Quiz Topic:</label>
+            <select id="topic-select" name="topic" required>
+              <option value="">-- Choose a Topic --</option>
+              <option value="General Aptitude">General Aptitude</option>
+              <option value="Basic C Programming">Basic C Programming</option>
+              <option value="Computer Fundamentals">Computer Fundamentals</option>
+              <option value="Web Basics">Web Basics</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="duration-select">Time Limit (Duration):</label>
+            <select id="duration-select" name="duration">
+              <option value="120" selected>2 Minutes (120s)</option>
+              <option value="180">3 Minutes (180s)</option>
+              <option value="300">5 Minutes (300s)</option>
+            </select>
+          </div>
+        </fieldset>
+
+        <p id="form-feedback" class="feedback-msg"></p>
+
+        <div class="btn-row">
+          <button type="submit" id="start-btn" class="btn btn-primary">Start Timed Quiz</button>
+          <button type="reset" id="reset-setup-btn" class="btn btn-secondary">Reset</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="quiz-section" class="quiz-grid hidden">
+      <article class="card quiz-main">
+        <div class="quiz-topbar">
+          <div>
+            <span id="active-topic-badge" class="badge">Topic</span>
+            <p id="progress-text" class="progress-label">Question 1 of 5</p>
+          </div>
+          <div class="timer-box" id="timer-box">
+            <span class="timer-label">Time Left:</span>
+            <strong id="timer-display">02:00</strong>
+          </div>
+        </div>
+
+        <progress id="question-progress" value="1" max="5"></progress>
+
+        <div class="question-block">
+          <h2 id="question-text">Question will appear here</h2>
+          <form id="options-form">
+            <div id="options-container" class="options-list"></div>
+          </form>
+        </div>
+
+        <div class="review-row">
+          <label for="mark-review-checkbox" class="review-label">
+            <input type="checkbox" id="mark-review-checkbox">
+            Mark Question for Review
+          </label>
+        </div>
+
+        <div id="submit-confirm-box" class="confirm-box hidden">
+          <p id="submit-confirm-text" class="confirm-text"></p>
+          <div class="btn-row">
+            <button type="button" id="confirm-submit-btn" class="btn btn-primary">Yes, Submit Quiz</button>
+            <button type="button" id="cancel-submit-btn" class="btn btn-secondary">Continue Quiz</button>
+          </div>
+        </div>
+
+        <div class="btn-row controls-row">
+          <button type="button" id="prev-btn" class="btn btn-secondary">Previous</button>
+          <button type="button" id="clear-btn" class="btn btn-secondary">Clear Answer</button>
+          <button type="button" id="next-btn" class="btn btn-primary">Next</button>
+          <button type="button" id="submit-quiz-btn" class="btn btn-accent">Submit Quiz</button>
+        </div>
+      </article>
+
+      <aside id="palette-aside" class="card palette-panel">
+        <h2>Question Palette</h2>
+        <div id="palette-grid" class="palette-grid"></div>
+        <ul class="legend-list">
+          <li><span class="dot dot-current"></span> Current</li>
+          <li><span class="dot dot-answered"></span> Answered</li>
+          <li><span class="dot dot-skipped"></span> Skipped</li>
+          <li><span class="dot dot-review"></span> Marked for Review</li>
+          <li><span class="dot dot-answered-review"></span> Answered &amp; Marked for Review</li>
+          <li><span class="dot dot-unvisited"></span> Unvisited</li>
+        </ul>
+      </aside>
+    </section>
+
+    <section id="results-section" class="card hidden">
+      <h2>Test Evaluation Summary</h2>
+      <p id="result-candidate" class="progress-label"></p>
+
+      <div class="stats-grid">
+        <article class="stat-card">
+          <h3>Total Score</h3>
+          <p id="stat-score" class="stat-value">0 / 0</p>
+        </article>
+        <article class="stat-card">
+          <h3>Accuracy</h3>
+          <p id="stat-accuracy" class="stat-value">0%</p>
+        </article>
+        <article class="stat-card">
+          <h3>Time Taken</h3>
+          <p id="stat-time" class="stat-value">00s</p>
+        </article>
+      </div>
+
+      <div class="filter-bar">
+        <button type="button" class="btn btn-secondary filter-btn active" data-filter="all">All</button>
+        <button type="button" class="btn btn-secondary filter-btn" data-filter="correct">Correct</button>
+        <button type="button" class="btn btn-secondary filter-btn" data-filter="incorrect">Incorrect / Unanswered</button>
+        <button type="button" class="btn btn-secondary filter-btn" data-filter="review">Marked for Review</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <caption>Detailed Question Breakdown</caption>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Question</th>
+              <th>Your Answer</th>
+              <th>Correct Answer</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="breakdown-body"></tbody>
+          <tfoot>
+            <tr>
+              <td colspan="3"><strong>Summary</strong></td>
+              <td colspan="2" id="table-footer-summary">0 Correct</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <div class="btn-row">
+        <button type="button" id="retake-btn" class="btn btn-primary">Take Another Quiz</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>CSE326 Internet Programming — Timed Multiple-Choice Quiz Management System</p>
+  </footer>
+</body>
+</html>
